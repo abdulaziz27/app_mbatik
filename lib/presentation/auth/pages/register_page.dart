@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-
+import '../../../bloc/register/register_cubit.dart';
 import '../../../core/components/buttons.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/core.dart';
@@ -62,164 +64,193 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 40.0),
-        children: [
-          const Text(
-            'Register Account',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+      body: BlocListener<RegisterCubit, RegisterState>(
+        listener: (context, state) {
+          if (state is RegisterLoading) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text('Loading..')));
+          }
+          if (state is RegisterFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(state.msg),
+                backgroundColor: Colors.red,
+              ));
+          }
+          if (state is RegisterSuccess) {
+            // context.read<AuthCubit>().loggedIn();
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(state.msg),
+                backgroundColor: Colors.green,
+              ));
+            context.goNamed(
+              RouteConstants.root,
+              pathParameters: PathParameters().toMap(),
+            );
+          }
+        },
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 40.0),
+          children: [
+            const Text(
+              'Register Account',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const Text(
-            'Hello, please complete the data below to register a new account',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
+            const Text(
+              'Hello, please complete the data below to register a new account',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SpaceHeight(50.0),
-          SelectTypeLogin(
-            typeLoginIs: typeLogin,
-            onChanged: (value) {
-              typeLogin = value;
-              setState(() {});
-            },
-          ),
-          if (typeLogin.isPhoneNumber) ...[
-            const SpaceHeight(80.0),
-            TextFormField(
-              controller: phoneController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                prefixIcon: DropdownButton<CountryModel>(
-                  value: selectedCountry,
-                  items: countries.map<DropdownMenuItem<CountryModel>>(
-                      (CountryModel country) {
-                    return DropdownMenuItem<CountryModel>(
-                      value: country,
-                      child: Row(
-                        children: [
-                          Image.network(
-                            country.flag,
-                            width: 24.0,
-                            height: 24.0,
-                            fit: BoxFit.contain,
-                          ),
-                          const SpaceWidth(10.0),
-                          Text('+${country.phoneCode}'),
-                        ],
+            const SpaceHeight(50.0),
+            SelectTypeLogin(
+              typeLoginIs: typeLogin,
+              onChanged: (value) {
+                typeLogin = value;
+                setState(() {});
+              },
+            ),
+            if (typeLogin.isPhoneNumber) ...[
+              const SpaceHeight(80.0),
+              TextFormField(
+                controller: phoneController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  prefixIcon: DropdownButton<CountryModel>(
+                    value: selectedCountry,
+                    items: countries.map<DropdownMenuItem<CountryModel>>(
+                        (CountryModel country) {
+                      return DropdownMenuItem<CountryModel>(
+                        value: country,
+                        child: Row(
+                          children: [
+                            Image.network(
+                              country.flag,
+                              width: 24.0,
+                              height: 24.0,
+                              fit: BoxFit.contain,
+                            ),
+                            const SpaceWidth(10.0),
+                            Text('+${country.phoneCode}'),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        final selected = value ?? selectedCountry;
+                        selectedCountry = selected;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SpaceHeight(50.0),
+              Button.filled(
+                onPressed: () {
+                  context.goNamed(RouteConstants.verification);
+                },
+                label: 'Minta OTP',
+              ),
+            ] else if (typeLogin.isEmail) ...[
+              const SpaceHeight(60.0),
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Email ID',
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Assets.icons.email.svg(),
+                  ),
+                ),
+              ),
+              const SpaceHeight(20.0),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Assets.icons.password.svg(),
+                  ),
+                ),
+              ),
+              const SpaceHeight(20.0),
+              TextFormField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Assets.icons.password.svg(),
+                  ),
+                ),
+              ),
+              const SpaceHeight(50.0),
+              Button.filled(
+                onPressed: () {
+                  context.read<RegisterCubit>().register(
+                      email: emailController.text,
+                      password: passwordController.text);
+                },
+                label: 'Register',
+              ),
+            ],
+            const SpaceHeight(50.0),
+            const Row(
+              children: [
+                Flexible(child: Divider()),
+                SizedBox(width: 14.0),
+                Text('OR'),
+                SizedBox(width: 14.0),
+                Flexible(child: Divider()),
+              ],
+            ),
+            const SpaceHeight(50.0),
+            Button.outlined(
+              onPressed: () {},
+              label: 'Register with Google',
+              icon: Assets.images.google.image(height: 20.0),
+            ),
+            const SpaceHeight(50.0),
+            InkWell(
+              onTap: () {
+                context.goNamed(RouteConstants.login);
+              },
+              child: const Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Already Account? ',
+                      style: TextStyle(
+                        color: AppColors.primary,
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      final selected = value ?? selectedCountry;
-                      selectedCountry = selected;
-                    });
-                  },
+                    ),
+                    TextSpan(
+                      text: 'Login Now',
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SpaceHeight(50.0),
-            Button.filled(
-              onPressed: () {
-                context.goNamed(RouteConstants.verification);
-              },
-              label: 'Minta OTP',
-            ),
-          ] else if (typeLogin.isEmail) ...[
-            const SpaceHeight(60.0),
-            TextFormField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email ID',
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Assets.icons.email.svg(),
-                ),
-              ),
-            ),
-            const SpaceHeight(20.0),
-            TextFormField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Assets.icons.password.svg(),
-                ),
-              ),
-            ),
-            const SpaceHeight(20.0),
-            TextFormField(
-              controller: confirmPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Assets.icons.password.svg(),
-                ),
-              ),
-            ),
-            const SpaceHeight(50.0),
-            Button.filled(
-              onPressed: () {
-                context.goNamed(
-                  RouteConstants.root,
-                  pathParameters: PathParameters().toMap(),
-                );
-              },
-              label: 'Register',
             ),
           ],
-          const SpaceHeight(50.0),
-          const Row(
-            children: [
-              Flexible(child: Divider()),
-              SizedBox(width: 14.0),
-              Text('OR'),
-              SizedBox(width: 14.0),
-              Flexible(child: Divider()),
-            ],
-          ),
-          const SpaceHeight(50.0),
-          Button.outlined(
-            onPressed: () {},
-            label: 'Register with Google',
-            icon: Assets.images.google.image(height: 20.0),
-          ),
-          const SpaceHeight(50.0),
-          InkWell(
-            onTap: () {
-              context.goNamed(RouteConstants.login);
-            },
-            child: const Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Already Account? ',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'Login Now',
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

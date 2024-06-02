@@ -1,3 +1,5 @@
+import 'package:app_mbatik/presentation/auth/pages/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -78,7 +80,10 @@ class AccountPage extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            onTap: () {},
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              GoRouter.of(context).go(RouteConstants.loginPath);
+            },
           ),
         ],
       ),
