@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'prakflutterfirebase-4a624.appspot.com',
     androidClientId: '148500074078-me8qh5o6bclajnk21n5nv0c4422o2t43.apps.googleusercontent.com',
     iosClientId: '148500074078-rfmcko4v6b0uepu493g6irbfbbqm4vjp.apps.googleusercontent.com',
-    iosBundleId: 'com.example.fic12FlutterStarter',
+    iosBundleId: 'com.tubes.fic12FlutterStarter',
   );
 
 }

@@ -1,11 +1,10 @@
-import 'package:app_mbatik/repositories/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'bloc/login/login_cubit.dart';
-import 'bloc/register/register_cubit.dart';
+import 'presentation/auth/bloc/login/login_cubit.dart';
+import 'presentation/auth/bloc/register/register_cubit.dart';
 import 'core/constants/colors.dart';
 import 'core/router/app_router.dart';
 import 'firebase_options.dart';

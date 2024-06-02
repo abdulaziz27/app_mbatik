@@ -4,12 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../../bloc/login/login_cubit.dart';
+import '../bloc/login/login_cubit.dart';
 import '../../../core/components/buttons.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/core.dart';
 import '../../../core/router/app_router.dart';
-import '../../home/pages/home_page.dart';
 import '../models/country_model.dart';
 import '../widgets/select_type_login.dart';
 

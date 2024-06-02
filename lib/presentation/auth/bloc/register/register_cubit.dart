@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:meta/meta.dart';
 
-import '../../repositories/auth_repo.dart';
+import '../../../../repositories/auth_repo.dart';
 
 part 'register_state.dart';
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_core/firebase_core.dart';
 
-import '../../../bloc/register/register_cubit.dart';
+import '../bloc/register/register_cubit.dart';
 import '../../../core/components/buttons.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/core.dart';

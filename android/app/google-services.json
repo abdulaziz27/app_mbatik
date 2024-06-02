@@ -92,6 +92,50 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148500074078:android:d62d3b089069a9167beecf",
+        "android_client_info": {
+          "package_name": "com.tubes.mbatik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148500074078-9tiboj1r5lhbmctj1tcifvg5584soeem.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tubes.mbatik",
+            "certificate_hash": "af8be75aea422e85398e714fbb2d2b6bcdab393a"
+          }
+        },
+        {
+          "client_id": "148500074078-8picha2kvcvtq5our68skv55gg9oduig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3wlQHTgeAwRlDKE3BXgsIr33Hn8tq9AU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148500074078-8picha2kvcvtq5our68skv55gg9oduig.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "148500074078-hnsjtcpij6g9rg8alf6grerkeqa13i38.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseAuth"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
